@@ -1,45 +1,62 @@
-import { useState } from 'react';
-import TodoItem from './components/TodoItem';
-import AddTaskForm from './components/AddTaskForm';
+import { useState } from "react";
+import { nanoid } from "nanoid";
+import TodoItem from "./components/TodoItem";
+import AddTaskForm from "./components/AddTaskForm";
+import AddTaskModal from "./components/AddTaskModal";
 
-function App({ tasks: initialTasks }) {
-    const [tasks, setTasks] = useState(initialTasks);
+function App(props) {
+  const [taskList, setTaskList] = useState(props.tasks);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const addTask = (name) => {
-        const newTask = {
-            id: `todo-${tasks.length}`,
-            name: name,
-            completed: false
-        };
-        setTasks([...tasks, newTask]);
-    };
+  function addTask(taskName) {
+    const newTask = { id: `todo-${nanoid()}`, name: taskName, completed: true };
+    setTaskList([...taskList, newTask]);
+    setIsModalOpen(false);
+  }
 
-    const deleteTask = (id) => {
-        setTasks(tasks.filter(task => task.id !== id));
-    };
+  function toggleTaskCompleted(id) {
+    const updatedTasks = taskList.map((task) => {
+      // if this task has the same ID as the edited task
+      if (id === task.id) {
+        // use object spread to make a new object
+        // whose `completed` prop has been inverted
+        return { ...task, completed: !task.completed };
+      }
+      return task;
+    });
+    setTaskList(updatedTasks);
+  }
 
-    const taskList = tasks.map((task) => (
-        <TodoItem
-            id={task.id}
-            name={task.name}
-            completed={task.completed}
-            key={task.id}
-            deleteTask={deleteTask}
-        />
-    ));
+  function deleteTask(id) {
+    let updatedTasks = []
+    taskList?.map((task) => {
+      if (id !== task.id) {
+        updatedTasks.push(task);
+      }
+    });
+    setTaskList(updatedTasks);
+  }
 
-    return (
-      <main className="m-4"> {/* Tailwind: margin level 4 on all sides */}
-          <section>
-              <h1 className="text-xl font-bold">To do</h1>
-              <ul
-                role="list"
-                className="todo-list stack-large stack-exception"
-                aria-labelledby="list-heading">
-                {taskList}
-               </ul>
-          </section>
+  function onCloseRequested() {
+    setIsModalOpen(false);
+  }
+
+  return (
+    <>
+      <AddTaskModal headerLabel="New Task" isOpen={isModalOpen} onCloseRequested={onCloseRequested}>
+        <AddTaskForm onNewTask={addTask} />
+      </AddTaskModal>
+
+      <main className="ml-4 mr-4"> {/* Tailwind: margin level 4 on all sides */}
+        <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 mt-4 p-1 pr-2 pl-2 rounded-md text-white">New Task</button>
+        <section className="">
+          <h1 className="text-xl font-bold pt-1">To do</h1>
+          <ul>
+            {[taskList?.map((task) => <TodoItem id={task.id} name={task.name} complete={task.complete} key={task.id} toggleTaskCompleted={toggleTaskCompleted} deleteTask={deleteTask} />)]}
+          </ul>
+        </section>
       </main>
+    </>
   );
 }
 

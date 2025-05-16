@@ -3,25 +3,11 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function TodoItem(props) {
     return (
-        <li className="todo stack-small">
-            <div className="c-cb">
-                <input
-                    id={props.id}
-                    type="checkbox"
-                    defaultChecked={props.completed}
-                />
-                <label className="todo-label" htmlFor={props.id}>
-                    {props.name}
-                </label>
-            </div>
-            <div className="btn-group">
-                <button 
-                    className="btn btn__danger text-gray-500"
-                    onClick={() => props.deleteTask(props.id)}
-                >
-                    <FontAwesomeIcon icon={faTrash} title="Delete task" />
-                </button>
-            </div>
+        <li  className='p-1'>
+            <label htmlFor={props.id}>
+                <input type="checkbox" id={props.id} defaultChecked={props.completed} onChange={() => props.toggleTaskCompleted(props.id)} /> {props.name}
+            </label>
+            <button onClick={() => props.deleteTask(props.id)}><FontAwesomeIcon icon={faTrash} className="ml-5 text-gray-600" /></button>
         </li>
     );
 }
