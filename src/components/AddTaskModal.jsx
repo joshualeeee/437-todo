@@ -4,7 +4,6 @@ function AddTaskModal(props) {
     const dialogueRef = useRef(null);
 
     function handleOverlayClick(e) {
-        // if the click didn't originate from dialogue div or one of it's children, then close modal
         if (!dialogueRef.current.contains(e.target)) {
             props.onCloseRequested();
         }

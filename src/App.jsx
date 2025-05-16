@@ -18,8 +18,6 @@ function App(props) {
     const updatedTasks = taskList.map((task) => {
       // if this task has the same ID as the edited task
       if (id === task.id) {
-        // use object spread to make a new object
-        // whose `completed` prop has been inverted
         return { ...task, completed: !task.completed };
       }
       return task;
